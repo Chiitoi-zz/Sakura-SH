@@ -1,0 +1,59 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+datasource db {
+    provider = "sqlite"
+    url      = "file:../sakura.db"
+}
+
+generator client {
+    provider = "prisma-client-js"
+}
+
+model Category {
+    guildId   BigInt
+    channelId BigInt
+    isChecked Boolean @default(false)
+
+    @@unique([guildId, channelId])
+    @@map("category")
+}
+
+model Ignore {
+    guildId   BigInt
+    channelId BigInt
+
+    @@unique([guildId, channelId])
+    @@map("ignore")
+}
+
+model Presence {
+    id     Int    @id @default(autoincrement())
+    type   String
+    name   String
+    status String
+
+    @@map("presence")
+}
+
+model SakuraInvite {
+    guildId     BigInt
+    code        String
+    expiresAt   DateTime?
+    isPermanent Boolean   @default(false)
+    isVanity    Boolean   @default(false)
+
+    @@unique([guildId, code])
+    @@map("invite")
+}
+
+model Setting {
+    guildId           BigInt  @id
+    prefix            String  @default("+")
+    checkChannelId    BigInt?
+    infoEmbedColor    Int     @default(16316671)
+    checkEmbedColor   Int     @default(16316671)
+    additionalRoleId  BigInt?
+
+    @@map("setting")
+}

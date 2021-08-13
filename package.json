@@ -1,0 +1,38 @@
+{
+    "author": "Chiitoi",
+    "dependencies": {
+        "@prisma/client": "^2.28.0",
+        "@sapphire/decorators": "^2.2.0",
+        "@sapphire/framework": "^2.0.0-next.380a4ef3.0",
+        "@sapphire/plugin-subcommands": "^2.0.0-next.2fcb413.0",
+        "discord.js": "^13.0.1",
+        "p-queue": "^7.1.0",
+        "pretty-ms": "^7.0.1",
+        "prisma": "^2.28.0"
+    },
+    "devDependencies": {
+        "rimraf": "^3.0.2",
+        "typescript": "^4.3.5"
+    },
+    "engines": {
+        "node": ">=16.6.0"
+    },
+    "imports": {
+        "#config": "./dist/config.js",
+        "#constants": "./dist/lib/utility/constants.js",
+        "#structures": "./dist/lib/structures/index.js",
+        "#types": "./dist/lib/types/index.js",
+        "#utils": "./dist/lib/utility/utils.js"
+    },
+    "license": "MIT",
+    "main": "dist/bot.js",
+    "repository": "https://github.com/Chiitoi/Sakura-SH.git",
+    "scripts": {
+        "build": "yarn clean && tsc",
+        "clean": "rimraf dist",
+        "dev": "yarn build && cls && yarn start",
+        "start": "node dist/bot.js"
+    },
+    "type": "module",
+    "version": "2.0.0"
+}

@@ -1,0 +1,12 @@
+# Dist
+dist
+
+# Packages
+node_modules
+
+# Random
+.vscode
+config.json
+sakura.db
+sakura.db-journal
+prisma/migrations
