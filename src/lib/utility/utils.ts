@@ -1,7 +1,8 @@
 import { DiscordInviteRegex, PRIORITY } from '#constants'
+import type { SakuraInvite } from '@prisma/client'
 import type { SapphireClient } from '@sapphire/framework'
 import { Invite, NewsChannel, TextChannel } from 'discord.js'
-import type { CategoryChannel, EmbedField, Guild, Interaction, Message, MessageActionRowOptions, MessageButtonOptions, MessageEmbed, MessageEmbedFooter, MessageSelectMenuOptions, SelectMenuInteraction } from 'discord.js'
+import type { CategoryChannel, DiscordAPIError, EmbedField, Guild, Interaction, Message, MessageActionRowOptions, MessageButtonOptions, MessageEmbed, MessageEmbedFooter, MessageSelectMenuOptions, SelectMenuInteraction } from 'discord.js'
 
 export const addCommas = (num: number) => num.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')
 
@@ -27,10 +28,10 @@ export const processCategory = async (client: SapphireClient, category: Category
 }
 
 export const processCode = async (client: SapphireClient, guildId: bigint, code: string, priority: PRIORITY) => {
-    const result: Invite = await client.queue.add(() => {
+    const result = await client.queue.add(() => {
         return client
             .fetchInvite(code)
-            .catch(error => error)
+            .catch((error: DiscordAPIError) => error)
     }, { priority })
 
     if (result instanceof Invite) {
@@ -54,23 +55,24 @@ export const processMessage = async (message: Message, priority: PRIORITY) => {
         return { bad, good }
 
     for (const code of codes) {
-        const invite = client.invites.get([guildId, code]) || await processCode(client, guildId, code, priority)
-        const valid = (invite instanceof Invite)
-            ? (invite?.expiresAt < now)
-            : (invite.isPermanent || (invite.expiresAt < now))
+        let valid: boolean, invite: Invite | SakuraInvite
+
+        if (client.invites.has(guildId, code)) {
+            invite = client.invites.get(guildId, code)
+            valid = invite.isPermanent
+                || (invite.isValid && (invite.expiresAt > now))
+            
+        } else {
+            invite = await processCode(client, guildId, code, priority)
+            valid = (invite instanceof Invite)
+                ? (invite?.expiresAt < now)
+                : false
+        }
 
         valid ? good++ : bad++
     }
 
     return { bad, good }
-}
-
-export const replyWithCheckEmbed = async (message: Message, description: string) => {
-    const guildId = BigInt(message.guildId)
-    const color = message.client.settings.getCheckEmbedColor(guildId)
-    const embed: Partial<MessageEmbed> = { color, description }
-
-    return message.reply({ embeds: [embed] })
 }
 
 export const replyWithInfoEmbed = async (message: Message, description: string) => {

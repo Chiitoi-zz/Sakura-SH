@@ -22,8 +22,8 @@ export class CategoryCommand extends SakuraCommand {
             const { client } = this.container
 
             await client.settings.addCategoryId(guildId, categoryId)
+            await replyWithInfoEmbed(message, `${ client.user.username } will queue "<#${ categoryId }>" and check when possible.`)
             await processCategory(client, category)
-            await replyWithInfoEmbed(message, `${ client.user.username } will now check "<#${ categoryId }>" during the next invite check.`)
         }
     }
 

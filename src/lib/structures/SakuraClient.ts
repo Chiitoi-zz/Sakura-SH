@@ -29,6 +29,7 @@ export class SakuraClient extends SapphireClient {
     }
 
     public async start() {
+        await this.invites.init()
         await this.presences.init()
         await this.settings.init()
         return super.login(TOKEN)

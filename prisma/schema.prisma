@@ -41,19 +41,19 @@ model SakuraInvite {
     code        String
     expiresAt   DateTime?
     isPermanent Boolean   @default(false)
-    isVanity    Boolean   @default(false)
+    isValid     Boolean   @default(true)
 
     @@unique([guildId, code])
     @@map("invite")
 }
 
 model Setting {
-    guildId           BigInt  @id
-    prefix            String  @default("+")
-    checkChannelId    BigInt?
-    infoEmbedColor    Int     @default(16316671)
-    checkEmbedColor   Int     @default(16316671)
-    additionalRoleId  BigInt?
+    guildId          BigInt  @id
+    prefix           String  @default("+")
+    checkChannelId   BigInt?
+    infoEmbedColor   Int     @default(16316671)
+    checkEmbedColor  Int     @default(16316671)
+    additionalRoleId BigInt?
 
     @@map("setting")
 }
