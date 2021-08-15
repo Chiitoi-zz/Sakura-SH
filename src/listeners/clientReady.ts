@@ -11,6 +11,8 @@ export class SakuraListener extends Listener {
         const { client } = this.container
         let presenceIndex = 0
 
+        console.log(`${ client.user.tag } is online!`)
+
         for (const guild of client.guilds.cache.values()) {
             const guildId = BigInt(guild.id)
             const uncheckedCategoryIds = await client.settings.getUncheckedCategoryIds(guildId)
@@ -36,7 +38,5 @@ export class SakuraListener extends Listener {
 
             presenceIndex = mod(presenceIndex + 1, presences.length)
         }, 60000)
-
-        console.log(`${ client.user.tag } is online!`)
     }
 }
