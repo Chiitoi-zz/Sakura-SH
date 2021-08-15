@@ -1,11 +1,10 @@
 import { QUERY } from '#constants'
 import { SakuraCommand } from '#structures'
 import type { QueryResult, SakuraCommandOptions } from '#types'
-import { replyWithHelpEmbed } from '#utils'
 import { ApplyOptions } from '@sapphire/decorators'
 import type { Args, Command, CommandStore } from '@sapphire/framework'
 import { Collection } from 'discord.js'
-import type { EmbedField, MessageEmbedFooter, Message } from 'discord.js'
+import type { EmbedField, MessageEmbed, MessageEmbedFooter, Message } from 'discord.js'
 
 @ApplyOptions<SakuraCommandOptions>({
 	aliases: ['h'],
@@ -59,7 +58,7 @@ export class HelpCommand extends SakuraCommand {
             title = `${ botName }${ botName.toLowerCase().endsWith('s') ? '\'' : '\'s' } commands`
         }
 
-        await replyWithHelpEmbed(message, description, fields, footer, title)
+        await this.replyWithHelpEmbed(message, description, fields, footer, title)
     }
 
 	private formatCommands(commands: CommandStore) {
@@ -95,5 +94,20 @@ export class HelpCommand extends SakuraCommand {
 
         if (command)
             return { result: command, type: QUERY.COMMAND }
+    }
+
+    private replyWithHelpEmbed(message: Message, description: string, fields?: EmbedField[], footer?: MessageEmbedFooter, title?: string) {
+        const guildId = BigInt(message.guildId)
+        const color = message.client.settings.getInfoEmbedColor(guildId)
+        const embed: Partial<MessageEmbed> = { color, description }
+    
+        if (fields.length)
+            embed.fields = fields
+        if (footer)
+            embed.footer = footer
+        if (title)
+            embed.title = title
+        
+        return message.reply({ embeds: [embed] })
     }
 }

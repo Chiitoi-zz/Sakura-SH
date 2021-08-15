@@ -81,21 +81,6 @@ export const replyWithInfoEmbed = async (message: Message, description: string) 
     return message.reply({ embeds: [embed] })
 }
 
-export const replyWithHelpEmbed = async (message: Message, description: string, fields?: EmbedField[], footer?: MessageEmbedFooter, title?: string) => {
-    const guildId = BigInt(message.guildId)
-    const color = message.client.settings.getInfoEmbedColor(guildId)
-    const embed: Partial<MessageEmbed> = { color, description }
-
-    if (fields.length)
-        embed.fields = fields
-    if (footer)
-        embed.footer = footer
-    if (title)
-        embed.title = title
-    
-    return message.reply({ embeds: [embed] })
-}
-
 export const replyWithButtonPages = async <T>(message: Message, items: T[], itemsPerPage: number, itemFunction: (item: T) => EmbedField) => {
     const color = message.client.settings.getInfoEmbedColor(BigInt(message.guildId))
     const pages: Partial<MessageEmbed>[] = Array
