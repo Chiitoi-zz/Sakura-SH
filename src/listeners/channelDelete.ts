@@ -10,6 +10,6 @@ export class SakuraListener extends Listener {
         if (!((channel instanceof NewsChannel) || (channel instanceof TextChannel)))
             return
 
-        await this.container.client.settings.removeChannel(channel)
+        await this.container.settings.removeChannel(channel)
     }
 }

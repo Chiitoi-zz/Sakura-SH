@@ -8,26 +8,26 @@ import type { CategoryChannel, PresenceData } from 'discord.js'
 @ApplyOptions<ListenerOptions>({ event: Events.ClientReady, once: true })
 export class SakuraListener extends Listener {
     public async run() {
-        const { client } = this.container
+        const { client, settings } = this.container
         let presenceIndex = 0
 
         console.log(`${ client.user.tag } is online!`)
 
         for (const guild of client.guilds.cache.values()) {
             const guildId = BigInt(guild.id)
-            const uncheckedCategoryIds = await client.settings.getUncheckedCategoryIds(guildId)
+            const uncheckedCategoryIds = await settings.getUncheckedCategoryIds(guildId)
 
-            await client.settings.addGuild(guildId)
+            await settings.addGuild(guildId)
 
             for (const uncheckedCategoryId of uncheckedCategoryIds) {
                 const uncheckedCategory = guild.channels.cache.get(uncheckedCategoryId.toString()) as CategoryChannel
 
-                await processCategory(client, uncheckedCategory)
+                await processCategory(uncheckedCategory)
             }
         }
 
         setInterval(() => {
-            const presences = [...client.presences.cache.values()]
+            const presences = [...this.container.presences.cache.values()]
 
             if (!presences.length)
                 return client.user.setPresence({ status: 'online' })                

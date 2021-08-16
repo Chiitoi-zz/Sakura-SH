@@ -23,7 +23,7 @@ export class IdsCommand extends SakuraCommand {
         const guildCategoryChannels = guild.channels.cache.filter(isCategoryChannel)
         const guildName = guild.name
         const embed: Partial<MessageEmbed> = {
-            color: guild.client.settings.getInfoEmbedColor(BigInt(guild.id)),
+            color: this.container.settings.getInfoEmbedColor(BigInt(guild.id)),
             description: guildCategoryChannels.size
                 ? guildCategoryChannels
                     .sort((c1, c2) => c1.position - c2.position)

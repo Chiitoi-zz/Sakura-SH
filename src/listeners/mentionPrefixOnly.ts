@@ -10,7 +10,7 @@ export class VanessaListener extends Listener {
         if (!message.guild)
             return
 
-        const prefix = this.container.client.settings.getPrefix(BigInt(message.guild.id))
+        const prefix = this.container.settings.getPrefix(BigInt(message.guild.id))
         await replyWithInfoEmbed(message, `Current prefix is \`${ prefix }\``)
     }
 }

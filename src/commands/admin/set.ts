@@ -26,11 +26,11 @@ import type { Message } from 'discord.js'
 })
 export class SetCommand extends SakuraCommand {
     public async additionalRole(message: Message, args: Args) {
-        const { client } = this.container
+        const { settings } = this.container
         const guildId = BigInt(message.guildId)
 
         if (args.finished) {
-            await client.settings.updateGuild(guildId, { additionalRoleId: null })
+            await settings.updateGuild(guildId, { additionalRoleId: null })
             await replyWithInfoEmbed(message, 'Cleared the additional role. Only administrators may use the bot now.')
 
             return
@@ -41,20 +41,20 @@ export class SetCommand extends SakuraCommand {
         if (!role)
             await replyWithInfoEmbed(message, 'No role found.')
         else {
-            const botName = client.user.username
+            const botName = this.container.client.user.username
             const botText = `${ botName }${ botName.toLowerCase().endsWith('s') ? '\'' : '\'s' } commands`
 
-            await client.settings.updateGuild(BigInt(message.guildId), { additionalRoleId: BigInt(role.id) })
+            await settings.updateGuild(BigInt(message.guildId), { additionalRoleId: BigInt(role.id) })
             await replyWithInfoEmbed(message, `Users with the ${ role } role may now use ${ botText }.`)
         }
     }
 
     public async checkChannel(message: Message, args: Args) {
-        const { client } = this.container
+        const { settings } = this.container
         const guildId = BigInt(message.guildId)
 
         if (args.finished) {
-            await client.settings.updateGuild(guildId, { checkChannelId: null })
+            await settings.updateGuild(guildId, { checkChannelId: null })
             await replyWithInfoEmbed(message, 'Cleared the check channel. Please set a check channel in order to run invite checks.')
 
             return
@@ -62,7 +62,7 @@ export class SetCommand extends SakuraCommand {
 
         const channel = await args.rest('guildNewsOrTextChannel')
 
-        await this.container.client.settings.updateGuild(BigInt(message.guildId), { checkChannelId: BigInt(channel.id) })
+        await settings.updateGuild(BigInt(message.guildId), { checkChannelId: BigInt(channel.id) })
         await replyWithInfoEmbed(message, `Check channel set to ${ channel }.`)
     }
 
@@ -87,7 +87,7 @@ export class SetCommand extends SakuraCommand {
         if (!valid)
             await replyWithInfoEmbed(message, 'Provided prefix must not contain spaces, have at least one special character, and be a maximum of three characters.')
         else {
-            await this.container.client.settings.updateGuild(BigInt(message.guildId), { prefix })
+            await this.container.settings.updateGuild(BigInt(message.guildId), { prefix })
             await replyWithInfoEmbed(message, `Prefix set to \`${ prefix }\``)
         }
     }
@@ -103,7 +103,7 @@ export class SetCommand extends SakuraCommand {
             : { infoEmbedColor: color }
         const optionCased = `${ option.charAt(0) }${ option.slice(1).toLowerCase() }`
 
-        await this.container.client.settings.updateGuild(BigInt(message.guild.id), data)
+        await this.container.settings.updateGuild(BigInt(message.guild.id), data)
         await replyWithInfoEmbed(message, `${ optionCased } embed color set to **#${ hexCode }**.`)
     }
 }

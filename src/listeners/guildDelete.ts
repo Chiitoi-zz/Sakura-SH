@@ -6,6 +6,6 @@ import type { Guild } from 'discord.js'
 @ApplyOptions<ListenerOptions>({ event: Events.GuildDelete })
 export class SakuraListener extends Listener {
     public async run(guild: Guild) {
-        await this.container.client.settings.removeGuild(BigInt(guild.id))
+        await this.container.settings.removeGuild(BigInt(guild.id))
     }
 }

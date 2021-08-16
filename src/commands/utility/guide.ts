@@ -15,7 +15,7 @@ export class GuideCommand extends SakuraCommand {
         if (!args.finished)
             return
 
-        const prefix = this.container.client.settings.getPrefix(BigInt(message.guild.id))
+        const prefix = this.container.settings.getPrefix(BigInt(message.guild.id))
         const description = [
             `- Set an invite check channel (where your results will go) using \`${ prefix }set checkchannel <newsChannel|textChannel>\`.`,
             `- Add categories (using IDs) with \`${ prefix }category add <categoryId>\`.`,

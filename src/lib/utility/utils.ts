@@ -1,6 +1,7 @@
 import { DiscordInviteRegex, PRIORITY } from '#constants'
 import type { SakuraInvite } from '@prisma/client'
 import type { SapphireClient } from '@sapphire/framework'
+import { container } from '@sapphire/pieces'
 import { Invite, NewsChannel, TextChannel } from 'discord.js'
 import type { CategoryChannel, DiscordAPIError, EmbedField, Guild, Interaction, Message, MessageActionRowOptions, MessageButtonOptions, MessageEmbed, MessageEmbedFooter, MessageSelectMenuOptions, SelectMenuInteraction } from 'discord.js'
 
@@ -8,7 +9,7 @@ export const addCommas = (num: number) => num.toString().replace(/(\d)(?=(\d{3})
 
 export const mod = (a: number, n: number) => ((a % n) + n) % n
 
-export const processCategory = async (client: SapphireClient, category: CategoryChannel) => {
+export const processCategory = async (category: CategoryChannel) => {
     for (const channel of category.children.values()) {
         if (!channel)
             continue
@@ -24,21 +25,21 @@ export const processCategory = async (client: SapphireClient, category: Category
             await processMessage(message, PRIORITY.CATEGORY)
     }
 
-    await client.settings.updateCategory(BigInt(category.guildId), BigInt(category.id))
+    await container.settings.updateCategory(BigInt(category.guildId), BigInt(category.id))
 }
 
-export const processCode = async (client: SapphireClient, guildId: bigint, code: string, priority: PRIORITY) => {
-    const result = await client.queue.add(() => {
-        return client
+export const processCode = async (guildId: bigint, code: string, priority: PRIORITY) => {
+    const result = await container.queue.add(() => {
+        return container.client
             .fetchInvite(code)
             .catch((error: DiscordAPIError) => error)
     }, { priority })
 
     if (result instanceof Invite) {
-        await client.invites.add(guildId, result)
+        await container.invites.add(guildId, result)
         return result
     } else {
-        await client.invites.add(guildId, code)
+        await container.invites.add(guildId, code)
         return null
     }
 }
@@ -57,13 +58,13 @@ export const processMessage = async (message: Message, priority: PRIORITY) => {
     for (const code of codes) {
         let valid: boolean, invite: Invite | SakuraInvite
 
-        if (client.invites.has(guildId, code)) {
-            invite = client.invites.get(guildId, code)
+        if (container.invites.has(guildId, code)) {
+            invite = container.invites.get(guildId, code)
             valid = invite.isPermanent
                 || (invite.isValid && (invite.expiresAt > now))
             
         } else {
-            invite = await processCode(client, guildId, code, priority)
+            invite = await processCode(guildId, code, priority)
             valid = (invite instanceof Invite)
                 ? (invite?.expiresAt < now)
                 : false
@@ -77,14 +78,14 @@ export const processMessage = async (message: Message, priority: PRIORITY) => {
 
 export const replyWithInfoEmbed = async (message: Message, description: string) => {
     const guildId = BigInt(message.guildId)
-    const color = message.client.settings.getInfoEmbedColor(guildId)
+    const color = container.settings.getInfoEmbedColor(guildId)
     const embed: Partial<MessageEmbed> = { color, description }
 
     return message.reply({ embeds: [embed] })
 }
 
 export const replyWithButtonPages = async <T>(message: Message, items: T[], itemsPerPage: number, itemFunction: (item: T) => EmbedField) => {
-    const color = message.client.settings.getInfoEmbedColor(BigInt(message.guildId))
+    const color = container.settings.getInfoEmbedColor(BigInt(message.guildId))
     const pages: Partial<MessageEmbed>[] = Array
         .from({ length: Math.ceil(items.length / itemsPerPage) }, (_, i) => items.slice(itemsPerPage * i, itemsPerPage * (i + 1)))
         .map((itemChunk, i, chunks) => ({

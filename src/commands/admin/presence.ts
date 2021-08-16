@@ -36,7 +36,7 @@ export class PresenceCommand extends SakuraCommand {
             return
         }
 
-        const presence = await this.container.client.presences.add({ status: status.toLowerCase() as ClientPresenceStatus, ...this.formatActivity(activity) })
+        const presence = await this.container.presences.add({ status: status.toLowerCase() as ClientPresenceStatus, ...this.formatActivity(activity) })
         await replyWithInfoEmbed(message, `Added presence #${ presence.id }.`)
     }
 
@@ -44,11 +44,11 @@ export class PresenceCommand extends SakuraCommand {
         if (args.finished)
             return this.missing('No "presenceId" provided')
 
-        const { client } = this.container
-        const presences = client.presences.cache
+        const { presences } = this.container
+        const presenceCache = presences.cache
 
-        if (!presences.size) {
-            await replyWithInfoEmbed(message, `${ client.user.username } has no added presences.`)
+        if (!presenceCache.size) {
+            await replyWithInfoEmbed(message, `${ this.container.client.user.username } has no added presences.`)
             
             return
         }
@@ -60,13 +60,13 @@ export class PresenceCommand extends SakuraCommand {
             
             return
         }
-        if (!presences.has(presenceId)) {
+        if (!presenceCache.has(presenceId)) {
             await replyWithInfoEmbed(message, 'No presence found.')
             
             return
         }
 
-        const presence = await client.presences.remove(presenceId)
+        const presence = await presences.remove(presenceId)
         await replyWithInfoEmbed(message, `Removed presence #${ presence.id }.`)
     }
 
@@ -74,11 +74,10 @@ export class PresenceCommand extends SakuraCommand {
         if (!args.finished)
             return
 
-        const { client } = this.container
-        const presences = [...client.presences.cache.values()]
+        const presences = [...this.container.presences.cache.values()]
 
         if (!presences.length) {
-            await replyWithInfoEmbed(message, `${ client.user.username } has no added presences.`)
+            await replyWithInfoEmbed(message, `${ this.container.client.user.username } has no added presences.`)
             
             return
         }

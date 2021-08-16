@@ -19,16 +19,16 @@ export class CheckCommand extends SakuraCommand {
         if (!args.finished)
             return
 
-        const { client } = this.container
+        const { settings } = this.container
         const guildId = BigInt(message.guildId)
-        const isCheckingCategories = await client.settings.isCheckingCategories(guildId)
-        const { categoryIds, checkChannelId, ignoreIds } = client.settings.get(guildId)
+        const isCheckingCategories = await settings.isCheckingCategories(guildId)
+        const { categoryIds, checkChannelId, ignoreIds } = settings.get(guildId)
 
         if (isCheckingCategories) {
             await replyWithInfoEmbed(message, 'This guild currently is currently checking categories. Please wait until all categories are checked before running an invite check.')
             return
         }
-        if (client.runningInviteCheck) {
+        if (this.container.runningInviteCheck) {
             await replyWithInfoEmbed(message, 'There is already an invite check in progress. Please wait until the current one is complete before running an invite check.')
             return
         }
@@ -49,7 +49,7 @@ export class CheckCommand extends SakuraCommand {
 
         const timerStart = hrtime.bigint()
 
-        client.runningInviteCheck = true
+        this.container.runningInviteCheck = true
 
         const checkCounts: CheckCounts = { categories: [], elapsedTime: 0n }
         const guildChannels = message.guild.channels.cache
@@ -106,7 +106,7 @@ export class CheckCommand extends SakuraCommand {
             await this.sendCategoryEmbed(message, categoryCounts)            
         }
 
-        client.runningInviteCheck = false
+        this.container.runningInviteCheck = false
 
         const timerEnd = hrtime.bigint()
         const elapsedTime = timerEnd - timerStart
@@ -120,7 +120,7 @@ export class CheckCommand extends SakuraCommand {
 
     private sendCategoryEmbed(message: Message, { channels, issues, manual, name }: CategoryCounts) {
         const guildId = BigInt(message.guildId)
-        const color = message.client.settings.getCheckEmbedColor(guildId)
+        const color = this.container.settings.getCheckEmbedColor(guildId)
         const embed: Partial<MessageEmbed> = {
             color,
             footer: { text: `Checked ${ channels.length ? 8 : 0 } messages` },
@@ -145,7 +145,7 @@ export class CheckCommand extends SakuraCommand {
 
     private sendCompleteEmbed(message: Message) {
         const guildId = BigInt(message.guildId)
-        const color = message.client.settings.getCheckEmbedColor(guildId)
+        const color = this.container.settings.getCheckEmbedColor(guildId)
         const embed: Partial<MessageEmbed> = { color, description: 'Invite check complete!' }
 
         return message.channel.send({ embeds: [embed] })
@@ -165,7 +165,7 @@ export class CheckCommand extends SakuraCommand {
 
         const totalInvites = totalBad + totalGood
         const guildId = BigInt(message.guildId)
-        const color = message.client.settings.getCheckEmbedColor(guildId)
+        const color = this.container.settings.getCheckEmbedColor(guildId)
         const embed: Partial<MessageEmbed> = {
             color,
             fields: [
@@ -190,7 +190,7 @@ export class CheckCommand extends SakuraCommand {
 
     private sendStartEmbed(message: Message) {
         const guildId = BigInt(message.guildId)
-        const color = message.client.settings.getCheckEmbedColor(guildId)
+        const color = this.container.settings.getCheckEmbedColor(guildId)
         const embed: Partial<MessageEmbed> = { color, description: `${ message.client.user.username } is checking your invites now!` }
 
         return message.channel.send({ embeds: [embed] })

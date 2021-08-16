@@ -3,7 +3,7 @@ import type { Message } from 'discord.js'
 
 export class AdditionalRolePrecondition extends Precondition {
     public async run({ guildId, member }: Message) {
-        const additionalRole = this.container.client.settings.getAdditionalRole(BigInt(guildId))
+        const additionalRole = this.container.settings.getAdditionalRole(BigInt(guildId))
 
         if (!additionalRole)
             return this.ok()

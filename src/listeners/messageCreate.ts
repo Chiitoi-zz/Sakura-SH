@@ -17,7 +17,7 @@ export class SakuraListener extends Listener {
             return
 
         const guildId = BigInt(guild.id)
-        const categoryIds = this.container.client.settings.getCategoryIds(guildId)
+        const categoryIds = this.container.settings.getCategoryIds(guildId)
         const categoryId = BigInt(channel?.parentId ?? 0)
 
         if (!categoryIds.includes(categoryId))

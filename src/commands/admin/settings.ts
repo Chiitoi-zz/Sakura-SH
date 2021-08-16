@@ -3,7 +3,7 @@ import type { SakuraCommandOptions } from '#types'
 import { replyWithSelectPages } from '#utils'
 import { ApplyOptions } from '@sapphire/decorators'
 import type { Args } from '@sapphire/framework'
-import type { CategoryChannel, Guild, GuildChannel, Message, MessageEmbed, ThreadChannel } from 'discord.js'
+import type { Guild, Message, MessageEmbed } from 'discord.js'
 
 @ApplyOptions<SakuraCommandOptions>({
     description: 'Displays a server\'s bot settings',
@@ -20,7 +20,7 @@ export class SettingsCommand extends SakuraCommand {
 
     private getSettingsEmbed(guild: Guild): Partial<MessageEmbed> {
         const guildId = BigInt(guild.id)
-        const { additionalRoleId, categoryIds, checkChannelId, checkEmbedColor, ignoreIds, infoEmbedColor, prefix } = guild.client.settings.get(guildId)
+        const { additionalRoleId, categoryIds, checkChannelId, checkEmbedColor, ignoreIds, infoEmbedColor, prefix } = this.container.settings.get(guildId)
         const guildChannels = guild.channels.cache
         const formatChannelList = (list: bigint[], type: 'CATEGORY' | 'IGNORE') => list
             .map(channelId => {
@@ -44,9 +44,7 @@ export class SettingsCommand extends SakuraCommand {
                 },
                 { inline: false, name: 'Additional role', value: additionalRoleId ? `<#${ additionalRoleId.toString() }>` : 'No additional role set.' },
                 { inline: false, name: 'Categories', value: categoryIds.length ? formatChannelList(categoryIds, 'CATEGORY') : 'No categories added.' },
-                { inline: false, name: 'Ignored channels', value: ignoreIds.length ? formatChannelList(ignoreIds, 'IGNORE') : 'No channels ignored.' },
-                
-
+                { inline: false, name: 'Ignored channels', value: ignoreIds.length ? formatChannelList(ignoreIds, 'IGNORE') : 'No channels ignored.' }
             ],
             title: `Settings for "${ guild.name }"`
         }

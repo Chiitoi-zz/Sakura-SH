@@ -15,7 +15,7 @@ import type { EmbedField, MessageEmbed, MessageEmbedFooter, Message } from 'disc
 })
 export class HelpCommand extends SakuraCommand {
     public async run(message: Message, args: Args) {
-        const prefix = this.container.client.settings.getPrefix(BigInt(message.guild.id)) 
+        const prefix = this.container.settings.getPrefix(BigInt(message.guild.id)) 
         const query = this.processQuery((await args.restResult('string'))?.value)
 
         let description = '', fields: EmbedField[] = [], footer: MessageEmbedFooter = {}, title = ''
@@ -98,7 +98,7 @@ export class HelpCommand extends SakuraCommand {
 
     private replyWithHelpEmbed(message: Message, description: string, fields?: EmbedField[], footer?: MessageEmbedFooter, title?: string) {
         const guildId = BigInt(message.guildId)
-        const color = message.client.settings.getInfoEmbedColor(guildId)
+        const color = this.container.settings.getInfoEmbedColor(guildId)
         const embed: Partial<MessageEmbed> = { color, description }
     
         if (fields.length)

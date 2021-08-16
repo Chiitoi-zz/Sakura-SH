@@ -2,16 +2,6 @@ import type { Invites, Presences, Settings } from '#structures'
 import type { NewsChannel, TextChannel } from 'discord.js'
 import type PQueue from 'p-queue'
 
-declare module 'discord.js' {
-    interface Client {
-        invites: Invites
-        presences: Presences
-        queue: PQueue
-        runningInviteCheck: boolean
-        settings: Settings
-    }
-}
-
 declare module '@sapphire/framework' {
     interface ArgType {
         guildNewsOrTextChannel: NewsChannel | TextChannel
@@ -28,5 +18,15 @@ declare module '@sapphire/framework' {
     interface Preconditions {
         AdditionalRole: never
         Administrator: never
+    }
+}
+
+declare module '@sapphire/pieces' {
+    interface Container {
+        invites: Invites
+        presences: Presences
+        queue: PQueue
+        runningInviteCheck: boolean
+        settings: Settings
     }
 }

@@ -20,7 +20,7 @@ export class CountsCommand extends SakuraCommand {
 
     private getCountsEmbed(guild: Guild): Partial<MessageEmbed> {
         const guildId = BigInt(guild.id)
-        const { categoryIds, ignoreIds, infoEmbedColor } = guild.client.settings.get(guildId)
+        const { categoryIds, ignoreIds, infoEmbedColor } = this.container.settings.get(guildId)
         const embed: Partial<MessageEmbed> = { color: infoEmbedColor, title: `Channel counts for "${ guild.name }"` }
 
         if (!categoryIds.length)

@@ -19,11 +19,11 @@ export class CategoryCommand extends SakuraCommand {
         if (inList)
             await replyWithInfoEmbed(message, `"<#${ categoryId }>" has already been added.`)
         else {
-            const { client } = this.container
+            const { client, settings } = this.container
 
-            await client.settings.addCategoryId(guildId, categoryId)
+            await settings.addCategoryId(guildId, categoryId)
             await replyWithInfoEmbed(message, `${ client.user.username } will queue "<#${ categoryId }>" and check when possible.`)
-            await processCategory(client, category)
+            await processCategory(category)
         }
     }
 
@@ -33,10 +33,8 @@ export class CategoryCommand extends SakuraCommand {
         if (!inList)
             await replyWithInfoEmbed(message, `"<#${ categoryId }>" is not in the list of added categories.`)
         else {
-            const { client } = this.container
-
-            await client.settings.removeCategoryId(guildId, categoryId)
-            await replyWithInfoEmbed(message, `${ client.user.username } will no longer check "<#${ categoryId }>".`)
+            await this.container.settings.removeCategoryId(guildId, categoryId)
+            await replyWithInfoEmbed(message, `${ this.container.client.user.username } will no longer check "<#${ categoryId }>".`)
         }
     }
 
@@ -52,10 +50,9 @@ export class CategoryCommand extends SakuraCommand {
             return
         }
 
-        const { client } = this.container
         const guildId = BigInt(message.guildId)          
         const categoryId = BigInt(category.id)
-        const inList = client.settings.getCategoryIds(guildId).includes(categoryId)
+        const inList = this.container.settings.getCategoryIds(guildId).includes(categoryId)
 
         return { category, categoryId, guildId, inList }
     }

@@ -19,10 +19,8 @@ export class IgnoreCommand extends SakuraCommand {
         if (inList)
             await replyWithInfoEmbed(message, `"<#${ channelId }>" is already ignored.`)
         else {
-            const { client } = this.container
-
-            await client.settings.addIgnoreId(guildId, channelId)
-            await replyWithInfoEmbed(message, `${ client.user.username } will now ignore "<#${ channelId }>" during the next invite check.`)
+            await this.container.settings.addIgnoreId(guildId, channelId)
+            await replyWithInfoEmbed(message, `${ this.container.client.user.username } will now ignore "<#${ channelId }>" during the next invite check.`)
         }
     }
 
@@ -32,10 +30,8 @@ export class IgnoreCommand extends SakuraCommand {
         if (!inList)
             await replyWithInfoEmbed(message, `"<#${ channelId }>" is not in the list of ignored channels.`)
         else {
-            const { client } = this.container
-
-            await client.settings.removeIgnoreId(guildId, channelId)
-            await replyWithInfoEmbed(message, `${ client.user.username } will no longer ignore "<#${ channelId }>".`)
+            await this.container.settings.removeIgnoreId(guildId, channelId)
+            await replyWithInfoEmbed(message, `${ this.container.client.user.username } will no longer ignore "<#${ channelId }>".`)
         }
     }
 
@@ -51,10 +47,9 @@ export class IgnoreCommand extends SakuraCommand {
             return
         }
 
-        const { client } = this.container
         const guildId = BigInt(message.guildId)          
         const channelId = BigInt(channel.id)
-        const inList = client.settings.getIgnoreIds(guildId).includes(channelId)
+        const inList = this.container.settings.getIgnoreIds(guildId).includes(channelId)
 
         return { guildId, channelId, inList }
     }
