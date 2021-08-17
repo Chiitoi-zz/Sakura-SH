@@ -3,6 +3,7 @@ import type { SakuraCommandOptions } from '#types'
 import { replyWithSelectPages } from '#utils'
 import { ApplyOptions } from '@sapphire/decorators'
 import type { Args } from '@sapphire/framework'
+import { container } from '@sapphire/pieces'
 import type { CategoryChannel, Guild, GuildChannel, Message, MessageEmbed, ThreadChannel } from 'discord.js'
 
 @ApplyOptions<SakuraCommandOptions>({
@@ -23,7 +24,7 @@ export class IdsCommand extends SakuraCommand {
         const guildCategoryChannels = guild.channels.cache.filter(isCategoryChannel)
         const guildName = guild.name
         const embed: Partial<MessageEmbed> = {
-            color: this.container.settings.getInfoEmbedColor(BigInt(guild.id)),
+            color: container.settings.getInfoEmbedColor(BigInt(guild.id)),
             description: guildCategoryChannels.size
                 ? guildCategoryChannels
                     .sort((c1, c2) => c1.position - c2.position)

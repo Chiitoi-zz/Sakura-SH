@@ -3,6 +3,7 @@ import type { SakuraCommandOptions } from '#types'
 import { replyWithSelectPages } from '#utils'
 import { ApplyOptions } from '@sapphire/decorators'
 import type { Args } from '@sapphire/framework'
+import { container } from '@sapphire/pieces'
 import type { CategoryChannel, Guild, GuildChannel, Message, MessageEmbed, ThreadChannel } from 'discord.js'
 
 @ApplyOptions<SakuraCommandOptions>({
@@ -20,7 +21,7 @@ export class CountsCommand extends SakuraCommand {
 
     private getCountsEmbed(guild: Guild): Partial<MessageEmbed> {
         const guildId = BigInt(guild.id)
-        const { categoryIds, ignoreIds, infoEmbedColor } = this.container.settings.get(guildId)
+        const { categoryIds, ignoreIds, infoEmbedColor } = container.settings.get(guildId)
         const embed: Partial<MessageEmbed> = { color: infoEmbedColor, title: `Channel counts for "${ guild.name }"` }
 
         if (!categoryIds.length)

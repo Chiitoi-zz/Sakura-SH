@@ -3,6 +3,7 @@ import type { SakuraCommandOptions } from '#types'
 import { replyWithSelectPages } from '#utils'
 import { ApplyOptions } from '@sapphire/decorators'
 import type { Args } from '@sapphire/framework'
+import { container } from '@sapphire/pieces'
 import type { Guild, Message, MessageEmbed } from 'discord.js'
 
 @ApplyOptions<SakuraCommandOptions>({
@@ -20,7 +21,7 @@ export class SettingsCommand extends SakuraCommand {
 
     private getSettingsEmbed(guild: Guild): Partial<MessageEmbed> {
         const guildId = BigInt(guild.id)
-        const { additionalRoleId, categoryIds, checkChannelId, checkEmbedColor, ignoreIds, infoEmbedColor, prefix } = this.container.settings.get(guildId)
+        const { additionalRoleId, categoryIds, checkChannelId, checkEmbedColor, ignoreIds, infoEmbedColor, prefix } = container.settings.get(guildId)
         const guildChannels = guild.channels.cache
         const formatChannelList = (list: bigint[], type: 'CATEGORY' | 'IGNORE') => list
             .map(channelId => {
