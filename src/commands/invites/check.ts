@@ -176,8 +176,8 @@ export class CheckCommand extends SakuraCommand {
                     value: [
                         `- **${ totalChannels }** channels checked`,
                         `- **${ totalInvites }** invites checked`,
-                        `- **${ totalGood }** (${ (100 * totalGood / totalInvites).toFixed(2) }%) valid invites`,
                         `- **${ totalBad }** (${ (100 * totalBad / totalInvites).toFixed(2) }%) invalid invites`,
+                        `- **${ totalGood }** (${ (100 * totalGood / totalInvites).toFixed(2) }%) valid invites`                        
                     ].join('\n')
                 }
             ],
