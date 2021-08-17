@@ -3,7 +3,7 @@ import { Invites, Presences, Settings } from '#structures'
 import Prisma from '@prisma/client'
 import { SapphireClient } from '@sapphire/framework'
 import { container } from '@sapphire/pieces'
-import { Intents } from 'discord.js'
+import { Intents, Options } from 'discord.js'
 import type { Message } from 'discord.js'
 import PQueue from 'p-queue'
 
@@ -16,7 +16,22 @@ export class SakuraClient extends SapphireClient {
                 Intents.FLAGS.GUILDS,
                 Intents.FLAGS.GUILD_MESSAGES
             ],
-            loadDefaultErrorListeners: false
+            loadDefaultErrorListeners: false,
+            makeCache: Options.cacheWithLimits({
+                ApplicationCommandManager: 0,
+                BaseGuildEmojiManager: 0,
+                GuildBanManager: 0,
+                GuildInviteManager: 0,
+                GuildStickerManager: 0,
+                MessageManager: 10,
+                PresenceManager: 0,
+                ReactionManager: 0,
+                ReactionUserManager: 0,
+                StageInstanceManager: 0,
+                ThreadManager: 0,
+                ThreadMemberManager: 0,
+                VoiceStateManager: 0
+            })
         })
     }
 
