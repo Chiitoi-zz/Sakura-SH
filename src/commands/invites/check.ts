@@ -163,7 +163,7 @@ export class CheckCommand extends SakuraCommand {
         const embed: Partial<MessageEmbed> = {
             color,
             fields: [
-                { inline: false, name: 'Elapsed time', value: prettyMilliseconds(Number(elapsedTime / BigInt(1e6)), { secondsDecimalDigits: 0 }) },
+                { inline: false, name: 'Elapsed time', value: prettyMilliseconds(Number(elapsedTime / BigInt(1e6)), { secondsDecimalDigits: 0, separateMilliseconds: true }) },
                 {
                     inline: false,
                     name: 'Stats',
