@@ -1,7 +1,8 @@
-import { Except, GuildSetting, RequireAtLeastOne } from '#types'
+import { GuildSetting } from '#types'
 import type { PrismaClient, Setting } from '@prisma/client'
 import { Collection } from 'discord.js'
 import type { NewsChannel, TextChannel } from 'discord.js'
+import { Except, RequireAtLeastOne } from 'type-fest'
 
 export class Settings {
     #prisma: PrismaClient

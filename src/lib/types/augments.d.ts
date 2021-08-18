@@ -6,7 +6,6 @@ declare module '@sapphire/framework' {
     interface ArgType {
         guildNewsOrTextChannel: NewsChannel | TextChannel
         hexCode: string
-        prefix: string
     }
 
     interface Command {

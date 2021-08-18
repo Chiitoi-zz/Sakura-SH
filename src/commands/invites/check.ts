@@ -1,6 +1,6 @@
 import { PRIORITY } from '#constants'
 import { SakuraCommand } from '#structures'
-import type { CategoryCounts, CheckCounts, SakuraCommandOptions } from '#types'
+import type { CategoryCounts, SakuraCommandOptions } from '#types'
 import { processMessage, replyWithInfoEmbed } from '#utils'
 import { ApplyOptions } from '@sapphire/decorators'
 import type { GuildBasedChannelTypes } from '@sapphire/discord.js-utilities'
@@ -46,13 +46,11 @@ export class CheckCommand extends SakuraCommand {
             return 
         }
 
+        this.container.runningInviteCheck = true
         await this.sendStartEmbed(message)
 
         const timerStart = hrtime.bigint()
-
-        this.container.runningInviteCheck = true
-
-        const checkCounts: CheckCounts = { categories: [], elapsedTime: 0n }
+        const checkCategoryCounts: CategoryCounts[] = []
         const guildChannels = message.guild.channels.cache
         const shouldCheckCategory = (channel: GuildBasedChannelTypes): channel is CategoryChannel => categoryIds.includes(BigInt(channel.id)) && channel.type === 'GUILD_CATEGORY'
         const categories = guildChannels
@@ -65,7 +63,6 @@ export class CheckCommand extends SakuraCommand {
             const channels = children
                 .filter(shouldCheckChannel)
                 .sort((c1, c2) => c1.position - c2.position)
-            
 
             if (!channels.size) {
                 await this.sendCategoryEmbed(message, categoryCounts)
@@ -103,21 +100,17 @@ export class CheckCommand extends SakuraCommand {
                 categoryCounts.channels.push({ bad: totalBad, channelId, good: totalGood })
             }
 
-            checkCounts.categories.push(categoryCounts)
+            checkCategoryCounts.push(categoryCounts)
             await this.sendCategoryEmbed(message, categoryCounts)            
         }
 
-        this.container.runningInviteCheck = false
-
         const timerEnd = hrtime.bigint()
         const elapsedTime = timerEnd - timerStart
-        checkCounts.elapsedTime = elapsedTime
 
+        this.container.runningInviteCheck = false
         await this.sendCompleteEmbed(message)
-        await this.sendResultsEmbed(message, checkCounts) 
+        await this.sendResultsEmbed(message, { categories: checkCategoryCounts, elapsedTime }) 
     }
-
-
 
     private sendCategoryEmbed(message: Message, { channels, issues, manual, name }: CategoryCounts) {
         const guildId = BigInt(message.guildId)
@@ -152,7 +145,7 @@ export class CheckCommand extends SakuraCommand {
         return message.channel.send({ embeds: [embed] })
     }
 
-    private sendResultsEmbed(message: Message, { categories, elapsedTime }: CheckCounts) {
+    private sendResultsEmbed(message: Message, { categories, elapsedTime }: { categories: CategoryCounts[], elapsedTime: bigint }) {
         let totalBad = 0, totalChannels = 0, totalGood = 0
 
         for (const { channels, issues, manual } of categories) {
