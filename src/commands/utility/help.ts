@@ -7,11 +7,11 @@ import { Collection } from 'discord.js'
 import type { EmbedField, MessageEmbed, MessageEmbedFooter, Message } from 'discord.js'
 
 @ApplyOptions<SakuraCommandOptions>({
-	aliases: ['h'],
-	description: 'Displays all available commands, including information about a specific command or category',
-	examples: ['help ping', 'help presence'],
+    aliases: ['h'],
+    description: 'Displays all available commands, including information about a specific command or category',
+    examples: ['help ping', 'help presence'],
     requiredClientPermissions: ['EMBED_LINKS'],
-	usage: ['help [query]']
+    usage: ['help [query]']
 })
 export class HelpCommand extends SakuraCommand {
     public async run(message: Message, args: Args) {
@@ -61,22 +61,22 @@ export class HelpCommand extends SakuraCommand {
         await this.replyWithHelpEmbed(message, description, fields, footer, title)
     }
 
-	private formatCommands(commands: CommandStore) {
-		const categoryNames = [...commands.map(({ category }) => category)].sort()
-		const categories = new Collection<string, Collection<string, Command>>()
+    private formatCommands(commands: CommandStore) {
+        const categoryNames = [...commands.map(({ category }) => category)].sort()
+        const categories = new Collection<string, Collection<string, Command>>()
 
-		for (const categoryName of categoryNames)
-			categories.set(categoryName, new Collection<string, Command>())
+        for (const categoryName of categoryNames)
+            categories.set(categoryName, new Collection<string, Command>())
 
-		for (const command of commands.values())
-			categories.get(command.category).set(command.name, command)
+        for (const command of commands.values())
+            categories.get(command.category).set(command.name, command)
 
-		for (const [_, category] of categories) {
-			category.sort((a, b) => a.name.localeCompare(b.name))
-		}
+        for (const [_, category] of categories) {
+            category.sort((a, b) => a.name.localeCompare(b.name))
+        }
 
-		return categories
-	}
+        return categories
+    }
 
     private processQuery(query: string): QueryResult {
         const commands = this.container.stores.get('commands')

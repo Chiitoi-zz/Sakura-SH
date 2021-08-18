@@ -28,10 +28,10 @@ export abstract class SakuraCommand extends SubCommandPluginCommand<Args, Sakura
         throw new UserError({ identifier: Identifiers.ArgsMissing, message })
     }
 
-	public async run(message: Message, args: Args, context: CommandContext) {
-		const result = await this.subCommands.run({ message, args, context, command: this })
+    public async run(message: Message, args: Args, context: CommandContext) {
+        const result = await this.subCommands.run({ message, args, context, command: this })
 
         if (this.subCommands && (result as any)?.error)
             throw new UserError({ identifier: Identifiers.SubCommandNoMatch, message: args.finished ? 'No subcommand provided.' : 'Invalid subcommand.' })
-	}
+    }
 }
