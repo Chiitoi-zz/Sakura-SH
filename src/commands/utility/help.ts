@@ -23,7 +23,7 @@ export class HelpCommand extends SakuraCommand {
         if (!query)
             return this.missing('No result found.')
         else if (query.type === QUERY.COMMAND) {
-            const { aliases, category, description, examples, name, strategy, usage } = query.result
+            const { aliases, category, description, examples, name, usage } = query.result
 
             fields = [
                 { inline: false, name: 'Category', value: category },
@@ -35,10 +35,6 @@ export class HelpCommand extends SakuraCommand {
 
             if (aliases.length)
                 fields.push({ inline: false, name: 'Aliases', value: aliases.map(alias => `\`${ prefix }${ alias }\``).join('\n') })
-            if ((strategy as any)?.flags?.length)
-                fields.push({ inline: false, name: 'Flags', value: (strategy as any).flags.map(flag => `\`--${ flag }\``).join('\n') })
-            if ((strategy as any)?.options?.length)
-                fields.push({ inline: false, name: 'Options', value: (strategy as any).options.map(option => `\`--${ option }=\``).join('\n') })
             if (examples.length)
                 fields.push({ inline: false, name: 'Examples', value: examples.map(example => `\`${ prefix }${ example }\``).join('\n') })
         } else if (query.type === QUERY.CATEGORY) {
