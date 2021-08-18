@@ -6,7 +6,7 @@ import type { Args } from '@sapphire/framework'
 import type { Message } from 'discord.js'
 import { readFile } from 'fs/promises'
 import { dirname, join } from 'path'
-import pms from 'pretty-ms'
+import prettyMilliseconds from 'pretty-ms'
 import { fileURLToPath } from 'url'
 
 @ApplyOptions<SakuraCommandOptions>({
@@ -25,7 +25,7 @@ export class StatsCommand extends SakuraCommand {
         const { version } = JSON.parse(await readFile(join(__dirname, '..', '..', '..', 'package.json'), 'utf-8'))
         const description = [
             `**Guild(s):** ${ addCommas(client.guilds.cache.size) }`,
-            `**Uptime:** ${ pms(client.uptime ?? 0, { secondsDecimalDigits: 0 }) }`,
+            `**Uptime:** ${ prettyMilliseconds(client.uptime ?? 0, { secondsDecimalDigits: 0 }) }`,
             `**Version:** v${ version }`
 
         ].join('\n')

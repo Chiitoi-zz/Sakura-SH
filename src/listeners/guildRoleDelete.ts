@@ -8,16 +8,11 @@ export class SakuraListener extends Listener {
     public async run(role: Role) {
         const { settings } = this.container
         const guildId = BigInt(role.guild.id)
-        const additionalRole = settings.getAdditionalRole(guildId)
+        const isAdditionalRole = settings.getAdditionalRole(guildId) === BigInt(role.id)
 
-        if (!additionalRole)
+        if (!isAdditionalRole)
             return
-            
-        const roleId = BigInt(role.id)
 
-        if (additionalRole !== roleId)
-            return
-        
         await settings.updateGuild(guildId, { additionalRoleId: null })
     }
 }

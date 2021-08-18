@@ -3,9 +3,10 @@ import { SakuraCommand } from '#structures'
 import type { CategoryCounts, CheckCounts, SakuraCommandOptions } from '#types'
 import { processMessage, replyWithInfoEmbed } from '#utils'
 import { ApplyOptions } from '@sapphire/decorators'
+import type { GuildBasedChannelTypes } from '@sapphire/discord.js-utilities'
 import type { Args } from '@sapphire/framework'
 import { Collection } from 'discord.js'
-import type { CategoryChannel, GuildChannel, Message, MessageEmbed, NewsChannel, TextChannel, ThreadChannel } from 'discord.js'
+import type { CategoryChannel, GuildChannel, Message, MessageEmbed, NewsChannel, TextChannel } from 'discord.js'
 import prettyMilliseconds from 'pretty-ms'
 import { hrtime } from 'process'
 
@@ -53,7 +54,7 @@ export class CheckCommand extends SakuraCommand {
 
         const checkCounts: CheckCounts = { categories: [], elapsedTime: 0n }
         const guildChannels = message.guild.channels.cache
-        const shouldCheckCategory = (channel: GuildChannel | ThreadChannel): channel is CategoryChannel => categoryIds.includes(BigInt(channel.id)) && channel.type === 'GUILD_CATEGORY'
+        const shouldCheckCategory = (channel: GuildBasedChannelTypes): channel is CategoryChannel => categoryIds.includes(BigInt(channel.id)) && channel.type === 'GUILD_CATEGORY'
         const categories = guildChannels
             .filter(shouldCheckCategory)
             .sort((c1, c2) => c1.position - c2.position)
@@ -165,11 +166,11 @@ export class CheckCommand extends SakuraCommand {
 
         const totalInvites = totalBad + totalGood
         const guildId = BigInt(message.guildId)
-        const color = this.container.settings.getCheckEmbedColor(guildId)
+        const color = this.container.settings.getCheckEmbedColor(guildId)        
         const embed: Partial<MessageEmbed> = {
             color,
             fields: [
-                { inline: false, name: 'Elapsed time', value: prettyMilliseconds(Number(elapsedTime / BigInt(1e6))) },
+                { inline: false, name: 'Elapsed time', value: prettyMilliseconds(Number(elapsedTime / BigInt(1e6)), { secondsDecimalDigits: 0 }) },
                 {
                     inline: false,
                     name: 'Stats',

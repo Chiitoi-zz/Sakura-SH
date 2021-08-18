@@ -4,7 +4,7 @@ import { replyWithSelectPages } from '#utils'
 import { ApplyOptions } from '@sapphire/decorators'
 import type { Args } from '@sapphire/framework'
 import { container } from '@sapphire/pieces'
-import type { CategoryChannel, Collection, Guild, GuildChannel, Message, MessageEmbed, ThreadChannel } from 'discord.js'
+import type { CategoryChannel, Collection, Guild, Message, MessageEmbed } from 'discord.js'
 
 @ApplyOptions<SakuraCommandOptions>({
     description: 'Displays a server\'s channel counts (by category)',

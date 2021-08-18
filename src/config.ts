@@ -11,7 +11,7 @@ let config: SakuraConfig
 try {
     config = JSON.parse(await readFile(join(__dirname, '..', 'config.json'), 'utf-8'))
 } catch (error) {
-    throw 'Rename "example-config.json" to "config.json".'
+    throw 'No "config.json" file found.'
 }
 
 export const { token: TOKEN } = config

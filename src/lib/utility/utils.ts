@@ -1,9 +1,8 @@
 import { DiscordInviteRegex, PRIORITY } from '#constants'
 import type { SakuraInvite } from '@prisma/client'
-import type { SapphireClient } from '@sapphire/framework'
 import { container } from '@sapphire/pieces'
 import { Invite, NewsChannel, TextChannel } from 'discord.js'
-import type { CategoryChannel, DiscordAPIError, EmbedField, Guild, Interaction, Message, MessageActionRowOptions, MessageButtonOptions, MessageEmbed, MessageEmbedFooter, MessageSelectMenuOptions, SelectMenuInteraction } from 'discord.js'
+import type { CategoryChannel, DiscordAPIError, EmbedField, Guild, Interaction, Message, MessageActionRowOptions, MessageButtonOptions, MessageEmbed, MessageSelectMenuOptions, SelectMenuInteraction } from 'discord.js'
 
 export const addCommas = (num: number) => num.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')
 
@@ -46,7 +45,7 @@ export const processCode = async (guildId: bigint, code: string, priority: PRIOR
 
 export const processMessage = async (message: Message, priority: PRIORITY) => {
     const now = new Date
-    const { client, content, guild } = message
+    const { content, guild } = message
     const guildId = BigInt(guild.id)
     const codes = [...content.matchAll(DiscordInviteRegex)].map(match => match[1])
 
@@ -74,14 +73,6 @@ export const processMessage = async (message: Message, priority: PRIORITY) => {
     }
 
     return { bad, good }
-}
-
-export const replyWithInfoEmbed = async (message: Message, description: string) => {
-    const guildId = BigInt(message.guildId)
-    const color = container.settings.getInfoEmbedColor(guildId)
-    const embed: Partial<MessageEmbed> = { color, description }
-
-    return message.reply({ embeds: [embed] })
 }
 
 export const replyWithButtonPages = async <T>(message: Message, items: T[], itemsPerPage: number, itemFunction: (item: T) => EmbedField) => {
@@ -122,6 +113,14 @@ export const replyWithButtonPages = async <T>(message: Message, items: T[], item
     }
 }
 
+export const replyWithInfoEmbed = async (message: Message, description: string) => {
+    const guildId = BigInt(message.guildId)
+    const color = container.settings.getInfoEmbedColor(guildId)
+    const embed: Partial<MessageEmbed> = { color, description }
+
+    return message.reply({ embeds: [embed] })
+}
+
 export const replyWithSelectPages = async(message: Message, embedFunction: (guild: Guild) => Partial<MessageEmbed>) => {
     const guilds = message.client.guilds.cache
 
@@ -151,7 +150,7 @@ export const replyWithSelectPages = async(message: Message, embedFunction: (guil
             const guildId = (interactions.last() as SelectMenuInteraction)?.values[0]
             const embed = guildId
                 ? embedFunction(guilds.get(guildId))
-                : { color: 0xF8F8FF, description: 'No server selected' }
+                : { color: container.settings.getInfoEmbedColor(BigInt(guildId)), description: 'No server selected' }
 
             await counts.edit({ components: [], embeds: [embed] })
         })

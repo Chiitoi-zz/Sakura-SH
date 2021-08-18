@@ -1,5 +1,5 @@
 import { ApplyOptions } from '@sapphire/decorators'
-import { GuildBasedChannelTypes } from '@sapphire/discord.js-utilities'
+import type { GuildBasedChannelTypes } from '@sapphire/discord.js-utilities'
 import { ExtendedArgument } from '@sapphire/framework'
 import type { ExtendedArgumentContext, ExtendedArgumentOptions } from '@sapphire/framework'
 import type { NewsChannel, TextChannel } from 'discord.js'

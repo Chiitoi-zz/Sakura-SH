@@ -5,10 +5,7 @@ export class AdditionalRolePrecondition extends Precondition {
     public async run({ guildId, member }: Message) {
         const additionalRole = this.container.settings.getAdditionalRole(BigInt(guildId))
 
-        if (!additionalRole)
-            return this.ok()
-
-        return member.roles.cache.has(additionalRole?.toString())
+        return (!additionalRole || member.roles.cache.has(additionalRole?.toString()))
             ? this.ok()
             : this.error()
     }

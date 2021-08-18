@@ -2,9 +2,10 @@ import { SakuraCommand } from '#structures'
 import type { SakuraCommandOptions } from '#types'
 import { replyWithSelectPages } from '#utils'
 import { ApplyOptions } from '@sapphire/decorators'
+import type { GuildBasedChannelTypes } from '@sapphire/discord.js-utilities'
 import type { Args } from '@sapphire/framework'
 import { container } from '@sapphire/pieces'
-import type { CategoryChannel, Guild, GuildChannel, Message, MessageEmbed, ThreadChannel } from 'discord.js'
+import type { CategoryChannel, Guild, Message, MessageEmbed } from 'discord.js'
 
 @ApplyOptions<SakuraCommandOptions>({
     description: 'Displays a server\'s category IDs',
@@ -20,7 +21,7 @@ export class IdsCommand extends SakuraCommand {
     }
 
     private getIdsEmbed(guild: Guild): Partial<MessageEmbed> {
-        const isCategoryChannel = (channel: GuildChannel | ThreadChannel): channel is CategoryChannel => channel.type === 'GUILD_CATEGORY'
+        const isCategoryChannel = (channel: GuildBasedChannelTypes): channel is CategoryChannel => channel.type === 'GUILD_CATEGORY'
         const guildCategoryChannels = guild.channels.cache.filter(isCategoryChannel)
         const guildName = guild.name
         const embed: Partial<MessageEmbed> = {
